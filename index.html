@@ -73,7 +73,7 @@
             /* Animasi Awal */
             opacity: 0;
             transform: translateY(50px) scale(0.9);
-            animation: cardEntry 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: cardEntry 1s cubic-bezier(0.175, 0.88, 0.32, 1.275) forwards;
         }
 
         @keyframes cardEntry {
@@ -94,37 +94,24 @@
 
         .profile-pic-wrapper {
             position: relative;
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
             margin: 0 auto 15px;
-            cursor: pointer;
         }
 
         .profile-pic {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 4px solid rgba(255,255,255,0.8);
             object-fit: cover;
-            transition: all 0.5s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 4px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            transition: transform 0.5s ease;
         }
 
-        /* Efek Ring Mengkilap */
-        .profile-pic-wrapper::before {
-            content: '';
-            position: absolute;
-            top: -5px; left: -5px; right: -5px; bottom: -5px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            border-top-color: #00c6ff;
-            border-right-color: #0072ff;
-            animation: spin 3s linear infinite;
+        .profile-pic:hover {
+            transform: scale(1.05);
         }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .profile-pic:hover { transform: scale(1.1) rotate(5deg); }
 
         .edit-icon {
             position: absolute;
@@ -139,11 +126,14 @@
             align-items: center;
             justify-content: center;
             font-size: 14px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
             transition: transform 0.3s;
         }
 
-        .profile-pic-wrapper:hover .edit-icon { transform: scale(1.2); }
+        .edit-icon:hover {
+            transform: scale(1.1);
+        }
 
         .title-name {
             font-size: 20px;
@@ -159,148 +149,185 @@
             border-radius: 20px;
             padding: 25px;
             margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 114, 255, 0.4);
+            box-shadow: 0 15px 35px rgba(0, 114, 255, 0.3);
             position: relative;
             overflow: hidden;
-            opacity: 0;
-            animation: slideUp 0.8s ease-out 0.5s forwards;
         }
 
-        /* Efek Kilau di Kartu Saldo */
-        .balance-card::after {
+        .balance-card::before {
             content: '';
             position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
             transform: rotate(45deg);
-            animation: shine 3s infinite;
+            animation: shimmer 3s infinite;
         }
 
-        @keyframes shine {
+        @keyframes shimmer {
             0% { transform: translateX(-100%) rotate(45deg); }
             100% { transform: translateX(100%) rotate(45deg); }
         }
 
         .balance-label {
-            font-size: 14px;
-            opacity: 0.9;
-            position: relative; z-index: 1;
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
         }
-        
+
         .balance-amount {
             font-size: 32px;
             font-weight: 700;
-            margin-top: 5px;
-            position: relative; z-index: 1;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* == HISTORY == */
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .history-item {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .history-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .history-label {
+            font-size: 10px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .history-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .plus { color: #4ade80; }
+        .minus { color: #f87171; }
+
+        /* == INPUT == */
+        .input-section {
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            color: white;
+            font-size: 14px;
+            outline: none;
             transition: all 0.3s;
         }
 
-        /* == INPUT & TOMBOL == */
-        .input-section {
-            margin-bottom: 30px;
-            opacity: 0;
-            animation: slideUp 0.8s ease-out 0.7s forwards;
-        }
-        
-        input[type="text"] {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 15px;
-            background: rgba(255,255,255,0.9);
-            font-size: 18px;
-            outline: none;
-            text-align: center;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 15px;
-            transition: box-shadow 0.3s;
+        input::placeholder {
+            color: rgba(255,255,255,0.5);
         }
 
-        input[type="text"]:focus {
-            box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.5);
+        input:focus {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
         }
 
-        .btn-group { display: flex; gap: 15px; }
-
-        button {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 1px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Efek Gelombang Tombol */
-        button:active { transform: scale(0.95); }
-        
-        .btn-in {
-            background: linear-gradient(135deg, #00b09b, #96c93d);
-            box-shadow: 0 5px 20px rgba(150, 201, 61, 0.4);
-        }
-        .btn-out {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
-            box-shadow: 0 5px 20px rgba(255, 75, 43, 0.4);
-        }
-
-        /* == STATISTIK == */
-        .stats-container {
+        /* == TOMBOL == */
+        .btn-group {
             display: flex;
-            gap: 20px;
-            opacity: 0;
-            animation: slideUp 0.8s ease-out 0.9s forwards;
+            gap: 15px;
         }
 
-        .stat-box {
+        .btn {
             flex: 1;
-            padding: 20px 15px;
-            border-radius: 20px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s;
-        }
-        
-        .stat-box:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.15); }
-
-        .stat-label { font-size: 10px; margin-bottom: 5px; opacity: 0.7; letter-spacing: 1px; }
-        .stat-value { font-size: 18px; font-weight: 700; }
-
-        /* Warna aksen */
-        .stat-in .stat-value { color: #96c93d; text-shadow: 0 0 10px rgba(150, 201, 61, 0.5); }
-        .stat-out .stat-value { color: #ff4b2b; text-shadow: 0 0 10px rgba(255, 75, 43, 0.5); }
-
-        /* Helper untuk animasi masuk */
-        .slide-up {
-            opacity: 0;
-            transform: translateY(20px);
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
         }
 
-        #fileInput { display: none; }
+        .btn-in {
+            background: #4ade80;
+            color: #052e16;
+            box-shadow: 0 10px 20px rgba(74, 222, 128, 0.3);
+        }
+
+        .btn-in:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(74, 222, 128, 0.4);
+        }
+
+        .btn-out {
+            background: #f87171;
+            color: #450a0a;
+            box-shadow: 0 10px 20px rgba(248, 113, 113, 0.3);
+        }
+
+        .btn-out:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(248, 113, 113, 0.4);
+        }
+
+        /* == ANIMASIAngka == */
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CSS untuk shake (disisipkan via JS biar ringan) */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- Efek Cahaya Belakang -->
     <div class="bg-lights" id="bgLights"></div>
 
     <div class="container">
         <!-- Profil -->
         <div class="profile-section">
-            <div class="profile-pic-wrapper" onclick="document.getElementById('fileInput').click()">
-                <img src="https://i.imgur.com/I1SBHEk.jpeg" alt="Foto Profil" class="profile-pic" id="profileImage">
-                <div class="edit-icon">✎</div>
-                <input type="file" id="fileInput" accept="image/*" onchange="changePhoto(this)">
+            <div class="profile-pic-wrapper">
+                <img src="https://i.imgur.com/J9gHWLL.jpeg" alt="Profile" class="profile-pic" id="profileImage">
+                <label for="fileInput" class="edit-icon">
+                    <i class="fas fa-camera"></i>
+                </label>
+                <input type="file" id="fileInput" accept="image/*" hidden onchange="changePhoto(this)">
             </div>
             <div class="title-name">Tabungan Saya</div>
         </div>
@@ -308,52 +335,81 @@
         <!-- Saldo Total -->
         <div class="balance-card">
             <div class="balance-label">Total Saldo</div>
-            <!-- ID 'balanceDisplay' untuk animasi JS -->
             <div class="balance-amount" id="balanceDisplay">Rp 0</div>
+        </div>
+
+        <!-- History Masuk/Keluar -->
+        <div class="history-row">
+            <div class="history-item">
+                <div class="history-label">Uang Masuk</div>
+                <div class="history-value plus" id="inDisplay">Rp 0</div>
+            </div>
+            <div class="history-item">
+                <div class="history-label">Uang Keluar</div>
+                <div class="history-value minus" id="outDisplay">Rp 0</div>
+            </div>
         </div>
 
         <!-- Input Transaksi -->
         <div class="input-section">
-            <input type="text" id="nominalInput" placeholder="Ketik Nominal..." oninput="formatInput(this)">
+            <div class="input-group">
+                <input type="text" id="nominalInput" placeholder="Ketik Nominal..." oninput="formatInput(this)">
+            </div>
+            
             <div class="btn-group">
-                <button class="btn-in" onclick="processTransaction('in')">Uang Masuk</button>
-                <button class="btn-out" onclick="processTransaction('out')">Uang Keluar</button>
-            </div>
-        </div>
-
-        <!-- Rincian -->
-        <div class="stats-container">
-            <div class="stat-box stat-in">
-                <div class="stat-label">UANG MASUK</div>
-                <div class="stat-value" id="inDisplay">Rp 0</div>
-            </div>
-            <div class="stat-box stat-out">
-                <div class="stat-label">UANG KELUAR</div>
-                <div class="stat-value" id="outDisplay">Rp 0</div>
+                <button class="btn btn-in" onclick="processTransaction('in')">
+                    <i class="fas fa-arrow-down"></i> Masuk
+                </button>
+                <button class="btn btn-out" onclick="processTransaction('out')">
+                    <i class="fas fa-arrow-up"></i> Keluar
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <script>
-        // == STATE & VARIABEL ==
-        let saldo = 40000000; // Saldo awal 40 Juta
-        let uangMasuk = 40000000;
+        // == VARIABEL GLOBAL ==
+        let saldo = 0;
+        let uangMasuk = 0;
         let uangKeluar = 0;
 
-        // Elemen DOM
         const elBalance = document.getElementById('balanceDisplay');
         const elIn = document.getElementById('inDisplay');
         const elOut = document.getElementById('outDisplay');
         const inputNominal = document.getElementById('nominalInput');
 
-        // == FUNGSI UTAMA ==
-
-        // 1. Format Angka ke Rupiah (dengan Koma)
-        function formatNum(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        // == FUNGSI LOCAL STORAGE == //
+        
+        // 1. Simpan Data ke Local Storage
+        function saveData() {
+            localStorage.setItem('tabungan_saldo', saldo);
+            localStorage.setItem('tabungan_masuk', uangMasuk);
+            localStorage.setItem('tabungan_keluar', uangKeluar);
         }
 
-        // 2. Animasi Angka Berputar (Count Up/Down)
+        // 2. Ambil Data dari Local Storage
+        function loadData() {
+            const savedSaldo = localStorage.getItem('tabungan_saldo');
+            const savedMasuk = localStorage.getItem('tabungan_masuk');
+            const savedKeluar = localStorage.getItem('tabungan_keluar');
+
+            // Jika ada data tersimpan, parse ke integer. Jika tidak, default 0.
+            saldo = savedSaldo ? parseInt(savedSaldo) : 0;
+            uangMasuk = savedMasuk ? parseInt(savedMasuk) : 0;
+            uangKeluar = savedKeluar ? parseInt(savedKeluar) : 0;
+        }
+
+        // == FUNGSI UTILITAS == //
+
+        // Format Angka (100000 -> 100.000)
+        function formatNum(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Animasi Angka (Count Up/Down)
         function animateValue(element, start, end, duration) {
             const range = end - start;
             const increment = end > start ? 1 : -1;
@@ -361,29 +417,28 @@
             let current = start;
             
             const timer = setInterval(function() {
-                current += (increment * 10000); // Lompat 10rb biar cepet
-                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
-                    current = end;
+                current += increment;
+                element.innerText = 'Rp ' + formatNum(current);
+                if (current === end) {
                     clearInterval(timer);
                 }
-                element.innerText = 'Rp ' + formatNum(current);
             }, stepTime);
         }
 
-        // 3. Update UI dengan Animasi
+        // Update UI dengan Animasi
         function updateUI(oldSaldo, oldIn, oldOut) {
             animateValue(elBalance, oldSaldo, saldo, 500);
             animateValue(elIn, oldIn, uangMasuk, 500);
             animateValue(elOut, oldOut, uangKeluar, 500);
         }
 
-        // 4. Proses Transaksi
+        // Proses Transaksi
         function processTransaction(type) {
             let rawValue = inputNominal.value.replace(/[^0-9]/g, '');
             const nominal = parseInt(rawValue);
 
             if (!nominal || nominal <= 0) {
-                shakeInput(); // Efek goyang jika error
+                shakeInput(); // Efek goyang saat error
                 return;
             }
 
@@ -406,19 +461,22 @@
 
             updateUI(oldSaldo, oldIn, oldOut);
             inputNominal.value = ''; // Kosongkan input
+
+            // PENTING: Simpan data setelah update
+            saveData(); 
         }
 
-        // 5. Format Input Real-time
+        // Format Input Real-time
         function formatInput(element) {
             let value = element.value.replace(/[^0-9]/g, '');
             if (value.length > 0) {
-                element.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                element.value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             } else {
                 element.value = "";
             }
         }
 
-        // 6. Ganti Foto
+        // Ganti Foto
         function changePhoto(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -432,8 +490,6 @@
             }
         }
 
-        // == EFEK TAMBAHAN ==
-        
         // Efek Goyang Input Error
         function shakeInput() {
             inputNominal.style.animation = "shake 0.5s";
@@ -455,28 +511,18 @@
             }
         }
 
-        // CSS untuk shake (disisipkin via JS biar ringan)
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes shake {
-                0% { transform: translateX(0); }
-                25% { transform: translateX(-10px); }
-                50% { transform: translateX(10px); }
-                75% { transform: translateX(-10px); }
-                100% { transform: translateX(0); }
-            }
-        `;
-        document.head.appendChild(style);
-
         // == INISIALISASI ==
         window.onload = function() {
             createLights();
-            // Set tampilan awal tanpa animasi (langsung)
+            
+            // 1. Load data dari storage terlebih dahulu
+            loadData();
+            
+            // 2. Update tampilan langsung tanpa animasi (agar langsung terlihat jumlahnya)
             elBalance.innerText = 'Rp ' + formatNum(saldo);
             elIn.innerText = 'Rp ' + formatNum(uangMasuk);
             elOut.innerText = 'Rp ' + formatNum(uangKeluar);
         };
-
     </script>
 </body>
 </html>
