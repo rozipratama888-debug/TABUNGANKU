@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabungan Premium</title>
+    <title>Tabungan Premium - Permanen</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         /* == DASAR == */
@@ -25,7 +24,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            overflow: hidden; /* Biar scroll bar hilang */
+            overflow: hidden;
             perspective: 1000px;
         }
 
@@ -299,13 +298,7 @@
             box-shadow: 0 15px 25px rgba(248, 113, 113, 0.4);
         }
 
-        /* == ANIMASIAngka == */
-        @keyframes countUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* CSS untuk shake (disisipkan via JS biar ringan) */
+        /* == ANIMASI == */
         @keyframes shake {
             0% { transform: translateX(0); }
             25% { transform: translateX(-10px); }
@@ -314,11 +307,45 @@
             100% { transform: translateX(0); }
         }
 
+        /* == NOTIFIKASI == */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            z-index: 9999;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .notification.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
     </style>
 </head>
 <body>
 
     <div class="bg-lights" id="bgLights"></div>
+    <div class="notification" id="notification">Data tersimpan permanen</div>
 
     <div class="container">
         <!-- Profil -->
@@ -328,9 +355,9 @@
                 <label for="fileInput" class="edit-icon">
                     <i class="fas fa-camera"></i>
                 </label>
-                <input type="file" id="fileInput" accept="image/*" hidden onchange="changePhoto(this)">
+                <input type="file" id="fileInput" accept="image/*" hidden>
             </div>
-            <div class="title-name">Tabungan Saya</div>
+            <div class="title-name">Tabungan Permanen</div>
         </div>
 
         <!-- Saldo Total -->
@@ -376,41 +403,217 @@
         let saldo = 0;
         let uangMasuk = 0;
         let uangKeluar = 0;
+        let db; // Database IndexedDB
 
         const elBalance = document.getElementById('balanceDisplay');
         const elIn = document.getElementById('inDisplay');
         const elOut = document.getElementById('outDisplay');
         const inputNominal = document.getElementById('nominalInput');
+        const notification = document.getElementById('notification');
+        const fileInput = document.getElementById('fileInput');
+        const profileImage = document.getElementById('profileImage');
 
-        // == FUNGSI LOCAL STORAGE == //
-        
-        // 1. Simpan Data ke Local Storage
-        function saveData() {
-            localStorage.setItem('tabungan_saldo', saldo);
-            localStorage.setItem('tabungan_masuk', uangMasuk);
-            localStorage.setItem('tabungan_keluar', uangKeluar);
+        // == FUNGSI NOTIFIKASI ==
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
         }
 
-        // 2. Ambil Data dari Local Storage
-        function loadData() {
+        // == INISIALISASI INDEXEDDB ==
+        function initDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('TabunganDB', 1);
+
+                request.onerror = function(event) {
+                    console.error('Database error:', event.target.error);
+                    reject(event.target.error);
+                };
+
+                request.onsuccess = function(event) {
+                    db = event.target.result;
+                    console.log('Database opened successfully');
+                    resolve(db);
+                };
+
+                request.onupgradeneeded = function(event) {
+                    const db = event.target.result;
+                    
+                    // Buat object store untuk data tabungan
+                    if (!db.objectStoreNames.contains('data')) {
+                        const store = db.createObjectStore('data', { keyPath: 'id' });
+                        console.log('Object store created');
+                    }
+                    
+                    // Buat object store untuk foto profil
+                    if (!db.objectStoreNames.contains('profile')) {
+                        const profileStore = db.createObjectStore('profile', { keyPath: 'id' });
+                        console.log('Profile store created');
+                    }
+                };
+            });
+        }
+
+        // == FUNGSI SIMPAN DATA KE INDEXEDDB ==
+        async function saveData() {
+            try {
+                const transaction = db.transaction(['data'], 'readwrite');
+                const store = transaction.objectStore('data');
+                
+                const data = {
+                    id: 'tabungan',
+                    saldo: saldo,
+                    uangMasuk: uangMasuk,
+                    uangKeluar: uangKeluar,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                const request = store.put(data);
+                
+                request.onsuccess = function() {
+                    console.log('Data saved to IndexedDB');
+                };
+                
+                request.onerror = function(event) {
+                    console.error('Error saving data:', event.target.error);
+                    // Fallback ke localStorage jika IndexedDB gagal
+                    localStorage.setItem('tabungan_saldo', saldo);
+                    localStorage.setItem('tabungan_masuk', uangMasuk);
+                    localStorage.setItem('tabungan_keluar', uangKeluar);
+                };
+                
+            } catch (error) {
+                console.error('Error in saveData:', error);
+                // Fallback ke localStorage
+                localStorage.setItem('tabungan_saldo', saldo);
+                localStorage.setItem('tabungan_masuk', uangMasuk);
+                localStorage.setItem('tabungan_keluar', uangKeluar);
+            }
+        }
+
+        // == FUNGSI LOAD DATA DARI INDEXEDDB ==
+        async function loadData() {
+            try {
+                // Coba load dari IndexedDB dulu
+                if (db) {
+                    const transaction = db.transaction(['data'], 'readonly');
+                    const store = transaction.objectStore('data');
+                    const request = store.get('tabungan');
+                    
+                    request.onsuccess = function(event) {
+                        const data = event.target.result;
+                        if (data) {
+                            saldo = data.saldo || 0;
+                            uangMasuk = data.uangMasuk || 0;
+                            uangKeluar = data.uangKeluar || 0;
+                            console.log('Data loaded from IndexedDB');
+                        } else {
+                            // Jika tidak ada di IndexedDB, coba load dari localStorage
+                            loadFromLocalStorage();
+                        }
+                        updateDisplay();
+                    };
+                    
+                    request.onerror = function() {
+                        // Jika gagal, coba load dari localStorage
+                        loadFromLocalStorage();
+                        updateDisplay();
+                    };
+                } else {
+                    // Jika IndexedDB belum siap, load dari localStorage
+                    loadFromLocalStorage();
+                    updateDisplay();
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                loadFromLocalStorage();
+                updateDisplay();
+            }
+        }
+
+        // == FUNGSI LOAD DARI LOCALSTORAGE (FALLBACK) ==
+        function loadFromLocalStorage() {
             const savedSaldo = localStorage.getItem('tabungan_saldo');
             const savedMasuk = localStorage.getItem('tabungan_masuk');
             const savedKeluar = localStorage.getItem('tabungan_keluar');
 
-            // Jika ada data tersimpan, parse ke integer. Jika tidak, default 0.
             saldo = savedSaldo ? parseInt(savedSaldo) : 0;
             uangMasuk = savedMasuk ? parseInt(savedMasuk) : 0;
             uangKeluar = savedKeluar ? parseInt(savedKeluar) : 0;
+            
+            console.log('Data loaded from localStorage');
         }
 
-        // == FUNGSI UTILITAS == //
+        // == FUNGSI UPDATE DISPLAY ==
+        function updateDisplay() {
+            elBalance.innerText = 'Rp ' + formatNum(saldo);
+            elIn.innerText = 'Rp ' + formatNum(uangMasuk);
+            elOut.innerText = 'Rp ' + formatNum(uangKeluar);
+        }
 
-        // Format Angka (100000 -> 100.000)
+        // == FUNGSI SIMPAN FOTO PROFIL ==
+        async function saveProfilePhoto(imageData) {
+            try {
+                const transaction = db.transaction(['profile'], 'readwrite');
+                const store = transaction.objectStore('profile');
+                
+                const data = {
+                    id: 'profilePhoto',
+                    imageData: imageData,
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                const request = store.put(data);
+                
+                request.onsuccess = function() {
+                    console.log('Profile photo saved');
+                };
+                
+            } catch (error) {
+                console.error('Error saving profile photo:', error);
+                // Fallback ke localStorage
+                localStorage.setItem('profile_photo', imageData);
+            }
+        }
+
+        // == FUNGSI LOAD FOTO PROFIL ==
+        async function loadProfilePhoto() {
+            try {
+                if (db) {
+                    const transaction = db.transaction(['profile'], 'readonly');
+                    const store = transaction.objectStore('profile');
+                    const request = store.get('profilePhoto');
+                    
+                    request.onsuccess = function(event) {
+                        const data = event.target.result;
+                        if (data && data.imageData) {
+                            profileImage.src = data.imageData;
+                        } else {
+                            // Coba load dari localStorage
+                            const savedPhoto = localStorage.getItem('profile_photo');
+                            if (savedPhoto) {
+                                profileImage.src = savedPhoto;
+                            }
+                        }
+                    };
+                } else {
+                    const savedPhoto = localStorage.getItem('profile_photo');
+                    if (savedPhoto) {
+                        profileImage.src = savedPhoto;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile photo:', error);
+            }
+        }
+
+        // == FUNGSI UTILITAS LAINNYA ==
         function formatNum(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        // Animasi Angka (Count Up/Down)
         function animateValue(element, start, end, duration) {
             const range = end - start;
             const increment = end > start ? 1 : -1;
@@ -426,24 +629,21 @@
             }, stepTime);
         }
 
-        // Update UI dengan Animasi
         function updateUI(oldSaldo, oldIn, oldOut) {
             animateValue(elBalance, oldSaldo, saldo, 500);
             animateValue(elIn, oldIn, uangMasuk, 500);
             animateValue(elOut, oldOut, uangKeluar, 500);
         }
 
-        // Proses Transaksi
-        function processTransaction(type) {
+        async function processTransaction(type) {
             let rawValue = inputNominal.value.replace(/[^0-9]/g, '');
             const nominal = parseInt(rawValue);
 
             if (!nominal || nominal <= 0) {
-                shakeInput(); // Efek goyang saat error
+                shakeInput();
                 return;
             }
 
-            // Simpan nilai lama untuk animasi
             const oldSaldo = saldo;
             const oldIn = uangMasuk;
             const oldOut = uangKeluar;
@@ -461,13 +661,13 @@
             }
 
             updateUI(oldSaldo, oldIn, oldOut);
-            inputNominal.value = ''; // Kosongkan input
+            inputNominal.value = '';
 
-            // PENTING: Simpan data setelah update
-            saveData(); 
+            // Simpan ke IndexedDB
+            await saveData();
+            showNotification('Data tersimpan permanen!');
         }
 
-        // Format Input Real-time
         function formatInput(element) {
             let value = element.value.replace(/[^0-9]/g, '');
             if (value.length > 0) {
@@ -477,27 +677,11 @@
             }
         }
 
-        // Ganti Foto
-        function changePhoto(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = document.getElementById('profileImage');
-                    img.src = e.target.result;
-                    img.style.animation = 'none'; // Reset animasi
-                    setTimeout(() => img.style.animation = 'spin 0.5s ease', 10); // Putar sekali
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        // Efek Goyang Input Error
         function shakeInput() {
             inputNominal.style.animation = "shake 0.5s";
             setTimeout(() => inputNominal.style.animation = "", 500);
         }
 
-        // Generate Background Lights
         function createLights() {
             const container = document.getElementById('bgLights');
             for(let i=0; i<10; i++) {
@@ -512,17 +696,38 @@
             }
         }
 
+        // == EVENT HANDLER FOTO PROFIL ==
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const img = document.getElementById('profileImage');
+                    img.src = e.target.result;
+                    
+                    // Simpan foto ke IndexedDB
+                    await saveProfilePhoto(e.target.result);
+                    showNotification('Foto profil tersimpan!');
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
         // == INISIALISASI ==
-        window.onload = function() {
+        window.onload = async function() {
             createLights();
             
-            // 1. Load data dari storage terlebih dahulu
-            loadData();
-            
-            // 2. Update tampilan langsung tanpa animasi (agar langsung terlihat jumlahnya)
-            elBalance.innerText = 'Rp ' + formatNum(saldo);
-            elIn.innerText = 'Rp ' + formatNum(uangMasuk);
-            elOut.innerText = 'Rp ' + formatNum(uangKeluar);
+            // Inisialisasi database
+            try {
+                await initDatabase();
+                await loadData();
+                await loadProfilePhoto();
+                console.log('Data loaded successfully');
+            } catch (error) {
+                console.error('Error initializing:', error);
+                // Fallback ke localStorage
+                loadFromLocalStorage();
+                updateDisplay();
+            }
         };
     </script>
 </body>
