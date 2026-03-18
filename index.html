@@ -24,19 +24,21 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
             perspective: 1000px;
         }
 
         /* == EFEK CAHAYA BERGERAK (BACKGROUND) == */
         .bg-lights {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
             z-index: 0;
+            pointer-events: none;
         }
 
         .light {
@@ -148,7 +150,7 @@
             background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
             border-radius: 20px;
             padding: 25px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             box-shadow: 0 15px 35px rgba(0, 114, 255, 0.3);
             position: relative;
             overflow: hidden;
@@ -192,7 +194,7 @@
         .history-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             gap: 15px;
         }
 
@@ -227,7 +229,7 @@
 
         /* == INPUT == */
         .input-section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .input-group {
@@ -298,6 +300,71 @@
             box-shadow: 0 15px 25px rgba(248, 113, 113, 0.4);
         }
 
+        /* == IMPORT EXPORT SECTION == */
+        .import-export-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            margin-bottom: 15px;
+        }
+
+        .ie-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-ie {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #451a03;
+            box-shadow: 0 8px 20px rgba(251, 191, 36, 0.3);
+        }
+
+        .btn-export:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(251, 191, 36, 0.4);
+        }
+
+        .btn-import {
+            background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+            color: #1e1b4b;
+            box-shadow: 0 8px 20px rgba(167, 139, 250, 0.3);
+        }
+
+        .btn-import:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(167, 139, 250, 0.4);
+        }
+
+        .btn-ie:active {
+            transform: translateY(0);
+        }
+
+        .btn-ie i {
+            font-size: 16px;
+        }
+
         /* == ANIMASI == */
         @keyframes shake {
             0% { transform: translateX(0); }
@@ -307,37 +374,165 @@
             100% { transform: translateX(0); }
         }
 
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .success-pulse {
+            animation: pulse 0.5s ease;
+        }
+
         /* == NOTIFIKASI == */
         .notification {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.85);
             color: white;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 50px;
             font-size: 14px;
             z-index: 9999;
-            display: none;
+            opacity: 0;
+            visibility: hidden;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
         }
 
         .notification.show {
-            display: block;
-            animation: slideDown 0.3s ease;
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, 0);
         }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -20px);
+        .notification.success {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.9), rgba(34, 197, 94, 0.9));
+            color: #052e16;
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, rgba(248, 113, 113, 0.9), rgba(239, 68, 68, 0.9));
+            color: #450a0a;
+        }
+
+        .notification.info {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.9), rgba(139, 92, 246, 0.9));
+            color: #1e1b4b;
+        }
+
+        /* == MODAL KONFIRMASI == */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 9998;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 30px;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            animation: modalPop 0.3s ease;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .modal-btn-cancel {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .modal-btn-cancel:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: #052e16;
+        }
+
+        .modal-btn-confirm:hover {
+            transform: translateY(-2px);
+        }
+
+        /* == HIDDEN INPUT FILE == */
+        #importFile {
+            display: none;
+        }
+
+        /* == RESPONSIVE == */
+        @media (max-width: 420px) {
+            .container {
+                padding: 25px 20px;
             }
-            to {
-                opacity: 1;
-                transform: translate(-50%, 0);
+            
+            .balance-amount {
+                font-size: 26px;
+            }
+            
+            .btn, .btn-ie {
+                padding: 12px 15px;
+                font-size: 12px;
             }
         }
     </style>
@@ -345,7 +540,28 @@
 <body>
 
     <div class="bg-lights" id="bgLights"></div>
-    <div class="notification" id="notification">Data tersimpan permanen</div>
+    <div class="notification" id="notification"></div>
+
+    <!-- Modal Konfirmasi Import -->
+    <div class="modal-overlay" id="importModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-file-import"></i>
+            </div>
+            <div class="modal-title">Import Data</div>
+            <div class="modal-text">
+                Data saat ini akan diganti dengan data dari file. Lanjutkan?
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-cancel" onclick="closeImportModal()">
+                    Batal
+                </button>
+                <button class="modal-btn modal-btn-confirm" onclick="confirmImport()">
+                    Import
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <!-- Profil -->
@@ -393,6 +609,22 @@
                 </button>
             </div>
         </div>
+
+        <!-- Import Export Section -->
+        <div class="import-export-section">
+            <div class="section-title">Backup & Restore Data</div>
+            <div class="ie-buttons">
+                <button class="btn-ie btn-export" onclick="exportData()">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
+                <button class="btn-ie btn-import" onclick="triggerImport()">
+                    <i class="fas fa-upload"></i>
+                    Import
+                </button>
+            </div>
+            <input type="file" id="importFile" accept=".json" onchange="handleImportFile(event)">
+        </div>
     </div>
 
     <!-- Font Awesome CDN -->
@@ -403,7 +635,8 @@
         let saldo = 0;
         let uangMasuk = 0;
         let uangKeluar = 0;
-        let db; // Database IndexedDB
+        let db = null;
+        let pendingImportData = null;
 
         const elBalance = document.getElementById('balanceDisplay');
         const elIn = document.getElementById('inDisplay');
@@ -412,14 +645,17 @@
         const notification = document.getElementById('notification');
         const fileInput = document.getElementById('fileInput');
         const profileImage = document.getElementById('profileImage');
+        const importModal = document.getElementById('importModal');
+        const importFile = document.getElementById('importFile');
 
         // == FUNGSI NOTIFIKASI ==
-        function showNotification(message) {
+        function showNotification(message, type = 'default') {
             notification.textContent = message;
-            notification.classList.add('show');
+            notification.className = 'notification show ' + type;
+            
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 2000);
+            }, 2500);
         }
 
         // == INISIALISASI INDEXEDDB ==
@@ -439,17 +675,15 @@
                 };
 
                 request.onupgradeneeded = function(event) {
-                    const db = event.target.result;
+                    const database = event.target.result;
                     
-                    // Buat object store untuk data tabungan
-                    if (!db.objectStoreNames.contains('data')) {
-                        const store = db.createObjectStore('data', { keyPath: 'id' });
+                    if (!database.objectStoreNames.contains('data')) {
+                        database.createObjectStore('data', { keyPath: 'id' });
                         console.log('Object store created');
                     }
                     
-                    // Buat object store untuk foto profil
-                    if (!db.objectStoreNames.contains('profile')) {
-                        const profileStore = db.createObjectStore('profile', { keyPath: 'id' });
+                    if (!database.objectStoreNames.contains('profile')) {
+                        database.createObjectStore('profile', { keyPath: 'id' });
                         console.log('Profile store created');
                     }
                 };
@@ -478,25 +712,25 @@
                 
                 request.onerror = function(event) {
                     console.error('Error saving data:', event.target.error);
-                    // Fallback ke localStorage jika IndexedDB gagal
-                    localStorage.setItem('tabungan_saldo', saldo);
-                    localStorage.setItem('tabungan_masuk', uangMasuk);
-                    localStorage.setItem('tabungan_keluar', uangKeluar);
+                    saveToLocalStorage();
                 };
                 
             } catch (error) {
                 console.error('Error in saveData:', error);
-                // Fallback ke localStorage
-                localStorage.setItem('tabungan_saldo', saldo);
-                localStorage.setItem('tabungan_masuk', uangMasuk);
-                localStorage.setItem('tabungan_keluar', uangKeluar);
+                saveToLocalStorage();
             }
+        }
+
+        // == FUNGSI SIMPAN KE LOCALSTORAGE (FALLBACK) ==
+        function saveToLocalStorage() {
+            localStorage.setItem('tabungan_saldo', saldo);
+            localStorage.setItem('tabungan_masuk', uangMasuk);
+            localStorage.setItem('tabungan_keluar', uangKeluar);
         }
 
         // == FUNGSI LOAD DATA DARI INDEXEDDB ==
         async function loadData() {
             try {
-                // Coba load dari IndexedDB dulu
                 if (db) {
                     const transaction = db.transaction(['data'], 'readonly');
                     const store = transaction.objectStore('data');
@@ -510,19 +744,16 @@
                             uangKeluar = data.uangKeluar || 0;
                             console.log('Data loaded from IndexedDB');
                         } else {
-                            // Jika tidak ada di IndexedDB, coba load dari localStorage
                             loadFromLocalStorage();
                         }
                         updateDisplay();
                     };
                     
                     request.onerror = function() {
-                        // Jika gagal, coba load dari localStorage
                         loadFromLocalStorage();
                         updateDisplay();
                     };
                 } else {
-                    // Jika IndexedDB belum siap, load dari localStorage
                     loadFromLocalStorage();
                     updateDisplay();
                 }
@@ -573,7 +804,6 @@
                 
             } catch (error) {
                 console.error('Error saving profile photo:', error);
-                // Fallback ke localStorage
                 localStorage.setItem('profile_photo', imageData);
             }
         }
@@ -591,7 +821,6 @@
                         if (data && data.imageData) {
                             profileImage.src = data.imageData;
                         } else {
-                            // Coba load dari localStorage
                             const savedPhoto = localStorage.getItem('profile_photo');
                             if (savedPhoto) {
                                 profileImage.src = savedPhoto;
@@ -609,30 +838,33 @@
             }
         }
 
-        // == FUNGSI UTILITAS LAINNYA ==
+        // == FUNGSI UTILITAS ==
         function formatNum(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
         function animateValue(element, start, end, duration) {
-            const range = end - start;
+            const range = Math.abs(end - start);
+            if (range === 0) return;
+            
             const increment = end > start ? 1 : -1;
             const stepTime = Math.abs(Math.floor(duration / range));
             let current = start;
             
             const timer = setInterval(function() {
-                current += increment;
-                element.innerText = 'Rp ' + formatNum(current);
-                if (current === end) {
+                current += increment * Math.ceil(range / 20);
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
                     clearInterval(timer);
                 }
-            }, stepTime);
+                element.innerText = 'Rp ' + formatNum(current);
+            }, stepTime || 20);
         }
 
         function updateUI(oldSaldo, oldIn, oldOut) {
-            animateValue(elBalance, oldSaldo, saldo, 500);
-            animateValue(elIn, oldIn, uangMasuk, 500);
-            animateValue(elOut, oldOut, uangKeluar, 500);
+            animateValue(elBalance, oldSaldo, saldo, 400);
+            animateValue(elIn, oldIn, uangMasuk, 400);
+            animateValue(elOut, oldOut, uangKeluar, 400);
         }
 
         async function processTransaction(type) {
@@ -641,6 +873,7 @@
 
             if (!nominal || nominal <= 0) {
                 shakeInput();
+                showNotification('Masukkan nominal yang valid!', 'error');
                 return;
             }
 
@@ -653,7 +886,7 @@
                 uangMasuk += nominal;
             } else {
                 if (nominal > saldo) {
-                    alert('Saldo tidak mencukupi!');
+                    showNotification('Saldo tidak mencukupi!', 'error');
                     return;
                 }
                 saldo -= nominal;
@@ -663,9 +896,14 @@
             updateUI(oldSaldo, oldIn, oldOut);
             inputNominal.value = '';
 
-            // Simpan ke IndexedDB
             await saveData();
-            showNotification('Data tersimpan permanen!');
+            showNotification('Transaksi berhasil disimpan!', 'success');
+            
+            // Pulse animation on balance card
+            document.querySelector('.balance-card').classList.add('success-pulse');
+            setTimeout(() => {
+                document.querySelector('.balance-card').classList.remove('success-pulse');
+            }, 500);
         }
 
         function formatInput(element) {
@@ -684,16 +922,178 @@
 
         function createLights() {
             const container = document.getElementById('bgLights');
-            for(let i=0; i<10; i++) {
+            for(let i = 0; i < 15; i++) {
                 const light = document.createElement('div');
                 light.classList.add('light');
-                light.style.width = Math.random() * 300 + 100 + 'px';
-                light.style.height = light.style.width;
+                const size = Math.random() * 300 + 100;
+                light.style.width = size + 'px';
+                light.style.height = size + 'px';
                 light.style.left = Math.random() * 100 + '%';
-                light.style.animationDuration = Math.random() * 10 + 10 + 's';
-                light.style.animationDelay = Math.random() * 5 + 's';
+                light.style.animationDuration = Math.random() * 10 + 15 + 's';
+                light.style.animationDelay = Math.random() * 10 + 's';
                 container.appendChild(light);
             }
+        }
+
+        // == FUNGSI EXPORT DATA ==
+        async function exportData() {
+            try {
+                // Ambil foto profil
+                let profileImageData = null;
+                try {
+                    if (db) {
+                        const transaction = db.transaction(['profile'], 'readonly');
+                        const store = transaction.objectStore('profile');
+                        const request = store.get('profilePhoto');
+                        
+                        profileImageData = await new Promise((resolve) => {
+                            request.onsuccess = function(event) {
+                                const data = event.target.result;
+                                resolve(data ? data.imageData : null);
+                            };
+                            request.onerror = function() {
+                                resolve(null);
+                            };
+                        });
+                    }
+                } catch (e) {
+                    console.log('No profile photo to export');
+                }
+
+                // Jika tidak ada di IndexedDB, cek localStorage
+                if (!profileImageData) {
+                    profileImageData = localStorage.getItem('profile_photo');
+                }
+
+                const exportDataObj = {
+                    version: '1.0',
+                    exportDate: new Date().toISOString(),
+                    data: {
+                        saldo: saldo,
+                        uangMasuk: uangMasuk,
+                        uangKeluar: uangKeluar
+                    },
+                    profileImage: profileImageData
+                };
+
+                const jsonString = JSON.stringify(exportDataObj, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                // Buat link download
+                const dateStr = new Date().toISOString().slice(0, 10);
+                const fileName = `tabungan_backup_${dateStr}.json`;
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showNotification('Data berhasil di-export!', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Gagal export data!', 'error');
+            }
+        }
+
+        // == FUNGSI TRIGGER IMPORT ==
+        function triggerImport() {
+            importFile.click();
+        }
+
+        // == FUNGSI HANDLE IMPORT FILE ==
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Cek ekstensi file
+            if (!file.name.endsWith('.json')) {
+                showNotification('File harus format JSON!', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Validasi struktur data
+                    if (!importedData.data || 
+                        typeof importedData.data.saldo === 'undefined' ||
+                        typeof importedData.data.uangMasuk === 'undefined' ||
+                        typeof importedData.data.uangKeluar === 'undefined') {
+                        showNotification('Format file tidak valid!', 'error');
+                        return;
+                    }
+
+                    // Simpan data untuk di-import setelah konfirmasi
+                    pendingImportData = importedData;
+                    
+                    // Tampilkan modal konfirmasi
+                    importModal.classList.add('show');
+                    
+                } catch (error) {
+                    console.error('Parse error:', error);
+                    showNotification('File rusak atau tidak valid!', 'error');
+                }
+            };
+            
+            reader.readAsText(file);
+            
+            // Reset input file
+            event.target.value = '';
+        }
+
+        // == FUNGSI KONFIRMASI IMPORT ==
+        async function confirmImport() {
+            if (!pendingImportData) return;
+            
+            try {
+                const oldSaldo = saldo;
+                const oldIn = uangMasuk;
+                const oldOut = uangKeluar;
+
+                // Update data
+                saldo = pendingImportData.data.saldo || 0;
+                uangMasuk = pendingImportData.data.uangMasuk || 0;
+                uangKeluar = pendingImportData.data.uangKeluar || 0;
+
+                // Update tampilan dengan animasi
+                updateUI(oldSaldo, oldIn, oldOut);
+
+                // Simpan ke database
+                await saveData();
+
+                // Import foto profil jika ada
+                if (pendingImportData.profileImage) {
+                    profileImage.src = pendingImportData.profileImage;
+                    await saveProfilePhoto(pendingImportData.profileImage);
+                }
+
+                showNotification('Data berhasil di-import!', 'success');
+                
+                // Pulse animation
+                document.querySelector('.balance-card').classList.add('success-pulse');
+                setTimeout(() => {
+                    document.querySelector('.balance-card').classList.remove('success-pulse');
+                }, 500);
+                
+            } catch (error) {
+                console.error('Import error:', error);
+                showNotification('Gagal import data!', 'error');
+            }
+            
+            // Tutup modal dan reset
+            closeImportModal();
+        }
+
+        // == FUNGSI TUTUP MODAL ==
+        function closeImportModal() {
+            importModal.classList.remove('show');
+            pendingImportData = null;
         }
 
         // == EVENT HANDLER FOTO PROFIL ==
@@ -701,14 +1101,25 @@
             if (e.target.files && e.target.files[0]) {
                 const reader = new FileReader();
                 reader.onload = async function(e) {
-                    const img = document.getElementById('profileImage');
-                    img.src = e.target.result;
-                    
-                    // Simpan foto ke IndexedDB
+                    profileImage.src = e.target.result;
                     await saveProfilePhoto(e.target.result);
-                    showNotification('Foto profil tersimpan!');
+                    showNotification('Foto profil tersimpan!', 'success');
                 };
                 reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        // == KEYBOARD SUPPORT ==
+        inputNominal.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                processTransaction('in');
+            }
+        });
+
+        // == CLOSE MODAL ON OUTSIDE CLICK ==
+        importModal.addEventListener('click', function(e) {
+            if (e.target === importModal) {
+                closeImportModal();
             }
         });
 
@@ -716,15 +1127,13 @@
         window.onload = async function() {
             createLights();
             
-            // Inisialisasi database
             try {
                 await initDatabase();
                 await loadData();
                 await loadProfilePhoto();
-                console.log('Data loaded successfully');
+                console.log('App initialized successfully');
             } catch (error) {
-                console.error('Error initializing:', error);
-                // Fallback ke localStorage
+                console.error('Initialization error:', error);
                 loadFromLocalStorage();
                 updateDisplay();
             }
